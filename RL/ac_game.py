@@ -13,7 +13,7 @@ tf.set_random_seed(2)
 
 MAX_EPISODE = 3000
 MAX_EP_STEPS = 1000
-DISPLAY_REWARD_THRESHOLD = 200
+DISPLAY_REWARD_THRESHOLD = 1000
 LR_A = 0.001
 LR_C = 0.01
 
@@ -23,6 +23,7 @@ class Game(object):
         self.env = env
         self.actor = actor
         self.critic = critic
+        self.reward_his = []
 
     def run(self):
         RENDER = False
@@ -50,17 +51,23 @@ class Game(object):
 
                 if done or t > MAX_EP_STEPS:
                     ep_rs_sum = sum(track_r)
+                    self.reward_his.append(ep_rs_sum)
 
                     if not hasattr(self, 'reward'):
                         self.reward = ep_rs_sum
                     else:
                         self.reward = self.reward * 0.95 + ep_rs_sum * 0.05
 
-                    if self.reward > DISPLAY_REWARD_THRESHOLD:
+                    if r > DISPLAY_REWARD_THRESHOLD:
                         RENDER = True
                     print('episode: ', i_episode, 'reward: ', int(self.reward))
                     break
 
+        import matplotlib.pyplot as plt
+        plt.plot(np.arange(len(self.reward_his)), self.reward_his)
+        plt.xlabel('episode')
+        plt.ylabel('reward')
+        plt.show()
 
 def CartPoleAC():
     env = gym.make('CartPole-v0')
