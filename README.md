@@ -7,6 +7,8 @@ machine learning/deep learning/reinforcement learning/autoML
 
 ## RL
 ### Deep-Q-Network
+
+### Actor-Critic
 algorithm:
 
 result:
