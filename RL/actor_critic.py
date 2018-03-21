@@ -4,7 +4,7 @@ import numpy as np
 np.random.seed(2)
 tf.set_random_seed(2)
 
-GAMMA = 0.9
+GAMMA = 0.8
 
 
 class Actor(object):
