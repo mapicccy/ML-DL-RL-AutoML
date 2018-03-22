@@ -25,6 +25,7 @@ class Game(object):
         self.critic = critic
         self.reward_his = []
 
+    # build single positive network
     def run(self):
         RENDER = False
         for i_episode in range(MAX_EPISODE):
@@ -69,14 +70,45 @@ class Game(object):
         plt.ylabel('reward')
         plt.show()
 
-def CartPoleAC():
-    env = gym.make('CartPole-v0')
-    env.seed(1)
-    env = env.unwrapped
-    env.reset()
+    # build positive and negative network
+    def run_double(self):
+        RENDER = False
+        reward_his = [[], []]
+        for i_episode in range(MAX_EP_STEPS):
+            t = 0
+            track_r = []
+            s = [self.env[0].reset(), self.env[1].reset()]
+            done = [False, False]
+            while done[0] is False or done[1] is False:
+                for i in range(len(self.env)):
+                    if RENDER:
+                        self.env[i].render()
 
-    n_features = env.observation_space.shape[0]
-    n_actions = env.action_space.n
+                    if done[i]:
+                        continue
+
+                    a = self.actor.choose_action(s[i])
+                    s_, r, done[i], info = self.env[i].step(a)
+
+                    if done[i]:
+                        r = -20
+
+                    # ToDo build network
+                    td_error = self.critic.learn()
+
+
+def CartPoleAC():
+    env1 = gym.make('CartPole-v0')
+    env2 = gym.make('CartPole-v0')
+    env1.seed(2)
+    env2.seed(2)
+    env1 = env1.unwrapped
+    env1.reset()
+    env2 = env2.unwrapped
+    env2.reset()
+
+    n_features = env1.observation_space.shape[0]
+    n_actions = env1.action_space.n
 
     sess = tf.Session()
 
@@ -84,7 +116,7 @@ def CartPoleAC():
     critic = Critic(sess, n_features, lr=LR_C)
     sess.run(tf.global_variables_initializer())
 
-    game = Game(env, actor, critic)
+    game = Game([env1, env2], actor, critic)
     game.run()
 
 

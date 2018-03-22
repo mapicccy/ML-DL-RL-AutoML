@@ -45,6 +45,10 @@ class Actor(object):
     def choose_action(self, s):
         s = s[np.newaxis, :]
         probs = self.sess.run(self.acts_prob, {self.s: s})
+
+        # build -reward network
+        # probs = 1/probs - 0.9
+        # probs /= probs.sum()
         return np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())
 
 
