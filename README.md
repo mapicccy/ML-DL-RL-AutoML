@@ -22,4 +22,7 @@ function run_double build positive and negative network, but the result is still
 the result of function run_double train positive network only:
 ![run_double_positive_only](./images/run_double_positive_only.png)
 
+the result of function run_double train positive and negative network:
+![run_double_positive_and negative](./images/run_double_positive_and_negative.png)
+
 ## AutoML
