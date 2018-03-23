@@ -78,9 +78,9 @@ class Game(object):
             t = 0
             track_r = [0, 0]
             s = [self.env[0].reset(), self.env[1].reset()]
-            done = [False, True]
+            done = [False, False]
             while done[0] is False or done[1] is False:
-                for i in range(1):
+                for i in range(2):
                     if RENDER:
                         self.env[i].render()
 
@@ -115,7 +115,7 @@ class Game(object):
                         done[i] = True
         import matplotlib.pyplot as plt
         plt.plot(np.arange(len(reward_his[0])), reward_his[0])
-        plt.plot(np.arange(len(reward_his[1])), reward_his[1])
+        # plt.plot(np.arange(len(reward_his[1])), reward_his[1])
         plt.xlabel('episode')
         plt.ylabel('reward')
         plt.show()
