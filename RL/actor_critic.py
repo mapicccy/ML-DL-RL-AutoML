@@ -51,6 +51,10 @@ class Actor(object):
         # probs /= probs.sum()
         return np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())
 
+    def action_probs(self, s):
+        s = s[np.newaxis, :]
+        return self.sess.run(self.acts_prob, {self.s: s})
+
 
 class Critic(object):
     def __init__(self, sess, n_features, lr=0.001):
@@ -84,7 +88,7 @@ class Critic(object):
     def learn(self, s, r, s_):
         s, s_ = s[np.newaxis, :], s_[np.newaxis, :]
 
-        v_ = self.sess.run(self.v, {self.s : s_})
+        v_ = self.sess.run(self.v, {self.s: s_})
         td_error, _ = self.sess.run([self.td_error, self.train_op], {self.s: s, self.v_: v_, self.r: r})
 
         return td_error

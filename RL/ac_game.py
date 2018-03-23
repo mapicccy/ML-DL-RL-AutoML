@@ -74,27 +74,51 @@ class Game(object):
     def run_double(self):
         RENDER = False
         reward_his = [[], []]
-        for i_episode in range(MAX_EP_STEPS):
+        for i_episode in range(MAX_EPISODE):
             t = 0
-            track_r = []
+            track_r = [0, 0]
             s = [self.env[0].reset(), self.env[1].reset()]
-            done = [False, False]
+            done = [False, True]
             while done[0] is False or done[1] is False:
-                for i in range(len(self.env)):
+                for i in range(1):
                     if RENDER:
                         self.env[i].render()
 
                     if done[i]:
                         continue
 
-                    a = self.actor.choose_action(s[i])
+                    p = self.actor.action_probs(s[i])
+                    if i == 1:
+                        p = 1 - p
+                        p /= p.sum()
+                    a = np.random.choice(np.arange(p.shape[1]), p=p.ravel())
                     s_, r, done[i], info = self.env[i].step(a)
 
                     if done[i]:
                         r = -20
 
-                    # ToDo build network
-                    td_error = self.critic.learn()
+                    if i == 1:
+                        new_r = -r
+                    else:
+                        new_r = r
+
+                    td_error = self.critic.learn(s[i], new_r, s_)
+                    self.actor.learn(s[i], a, td_error)
+
+                    s[i] = s_
+                    t += 1
+                    track_r[i] += r
+
+                    if done[i] or t > MAX_EP_STEPS:
+                        print(i, ' episode: ', i_episode, ' reward: ', int(track_r[i]))
+                        reward_his[i].append(track_r[i])
+                        done[i] = True
+        import matplotlib.pyplot as plt
+        plt.plot(np.arange(len(reward_his[0])), reward_his[0])
+        plt.plot(np.arange(len(reward_his[1])), reward_his[1])
+        plt.xlabel('episode')
+        plt.ylabel('reward')
+        plt.show()
 
 
 def CartPoleAC():
@@ -117,7 +141,7 @@ def CartPoleAC():
     sess.run(tf.global_variables_initializer())
 
     game = Game([env1, env2], actor, critic)
-    game.run()
+    game.run_double()
 
 
 if __name__ == '__main__':
