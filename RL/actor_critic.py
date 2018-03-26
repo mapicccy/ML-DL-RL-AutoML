@@ -4,7 +4,7 @@ import numpy as np
 np.random.seed(2)
 tf.set_random_seed(2)
 
-GAMMA = 0.8
+GAMMA = 0.9
 
 
 class Actor(object):
@@ -46,9 +46,6 @@ class Actor(object):
         s = s[np.newaxis, :]
         probs = self.sess.run(self.acts_prob, {self.s: s})
 
-        # build -reward network
-        # probs = 1/probs - 0.9
-        # probs /= probs.sum()
         return np.random.choice(np.arange(probs.shape[1]), p=probs.ravel())
 
     def action_probs(self, s):

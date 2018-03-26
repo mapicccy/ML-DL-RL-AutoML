@@ -40,7 +40,7 @@ class Game(object):
                 s_, r, done, info = self.env.step(a)
 
                 if done:
-                    r = -20
+                    r = 0
 
                 track_r.append(r)
 
@@ -78,7 +78,7 @@ class Game(object):
             t = 0
             track_r = [0, 0]
             s = [self.env[0].reset(), self.env[1].reset()]
-            done = [False, False]
+            done = [False, True]
             while done[0] is False or done[1] is False:
                 for i in range(2):
                     if RENDER:
@@ -92,10 +92,12 @@ class Game(object):
                         p = 1 - p
                         p /= p.sum()
                     a = np.random.choice(np.arange(p.shape[1]), p=p.ravel())
+
+                    # a = self.actor.choose_action(s[i])
                     s_, r, done[i], info = self.env[i].step(a)
 
                     if done[i]:
-                        r = -20
+                        r = 0
 
                     if i == 1:
                         new_r = -r
@@ -123,13 +125,13 @@ class Game(object):
 
 def CartPoleAC():
     env1 = gym.make('CartPole-v0')
-    env2 = gym.make('CartPole-v0')
+    # env2 = gym.make('CartPole-v0')
     env1.seed(2)
-    env2.seed(2)
+    # env2.seed(2)
     env1 = env1.unwrapped
     env1.reset()
-    env2 = env2.unwrapped
-    env2.reset()
+    # env2 = env2.unwrapped
+    # env2.reset()
 
     n_features = env1.observation_space.shape[0]
     n_actions = env1.action_space.n
@@ -140,8 +142,11 @@ def CartPoleAC():
     critic = Critic(sess, n_features, lr=LR_C)
     sess.run(tf.global_variables_initializer())
 
-    game = Game([env1, env2], actor, critic)
-    game.run_double()
+    g = Game(env1, actor, critic)
+    g.run()
+
+    # game = Game([env1, env2], actor, critic)
+    # game.run_double()
 
 
 if __name__ == '__main__':
