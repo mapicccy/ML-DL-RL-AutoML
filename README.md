@@ -7,6 +7,8 @@ machine learning/deep learning/reinforcement learning/autoML
 
 ## RL
 ### Deep-Q-Network
+algorithm:
+![dqn_algorithm](./images/dqn_algorithm.png)
 
 ### Actor-Critic
 algorithm:
