@@ -1,11 +1,12 @@
 import sys
 import gym
+import numpy as np
 
 sys.path.append('./')
 
 from dqn import DeepQNetwork
 
-NUM_EPISODE = 1000
+NUM_EPISODE = 3000
 MEMORY_CAPACITY = 100000
 
 
@@ -16,12 +17,13 @@ class Game(object):
 
     def run(self):
         step = 0
+        episode_reward = []
         for episode in range(NUM_EPISODE):
             observation = self.env.reset()
             ep_r = 0
             print('Episode %d, step = %d' % (episode, step))
             while True:
-                self.env.render()
+                # self.env.render()
 
                 action = self.rls.choose_action(observation)
 
@@ -46,6 +48,14 @@ class Game(object):
 
                 observation = observation_
                 step += 1
+
+            episode_reward.append(ep_r)
+
+        import matplotlib.pyplot as plt
+        plt.plot(np.arange(len(episode_reward)), episode_reward)
+        plt.xlabel('episode')
+        plt.ylabel('reward')
+        plt.show()
 
 
 def CartPoleDQN():
