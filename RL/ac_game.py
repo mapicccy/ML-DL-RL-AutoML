@@ -170,7 +170,7 @@ class Game(object):
 def CartPoleAC():
     env1 = gym.make('CartPole-v0')
     # env2 = gym.make('CartPole-v0')
-    env1.seed(2)
+    env1.seed(10)
     # env2.seed(2)
     env1 = env1.unwrapped
     env1.reset()
@@ -213,5 +213,5 @@ def MountainCar():
 
 
 if __name__ == '__main__':
-    # CartPoleAC()
-    MountainCar()
+    CartPoleAC()
+    # MountainCar()
