@@ -63,7 +63,6 @@ class DDQN:
 
         # ---------- build evaluate net ------------
         self.s = tf.placeholder(tf.float32, [None, self.n_features], name='s')
-        # Todo there is a bug here
         self.q_target = tf.placeholder(tf.float32, [None, self.n_actions], name='q_target')
 
         with tf.variable_scope('eval_net'):
@@ -105,7 +104,7 @@ class DDQN:
         return action
 
     def learn(self):
-        if self.learning_step_counter % self.replace_target_iter == 0:
+        if self.learn_step_counter % self.replace_target_iter == 0:
             self.sess.run(self.replace_target_op)
             print('\ntarget params replaced\n')
 
