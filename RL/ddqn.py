@@ -28,7 +28,7 @@ class DDQN:
         self.epsilon_increment = e_greedy_increment
         self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
         self.double_q = double_q
-        self.learning_step_counter = 0
+        self.learn_step_counter = 0
 
         self._build_net()
 
@@ -65,6 +65,7 @@ class DDQN:
         self.s = tf.placeholder(tf.float32, [None, self.n_features], name='s')
         # Todo there is a bug here
         self.q_target = tf.placeholder(tf.float32, [None, self.n_actions], name='q_target')
+
         with tf.variable_scope('eval_net'):
             c_names, n_l1, w_initializer, b_initializer = ['eval_net_params',
                                                            tf.GraphKeys.GLOBAL_VARIABLES], 128, \
@@ -73,7 +74,7 @@ class DDQN:
             self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer)
 
         with tf.variable_scope('loss'):
-            self.loss = tf.reduce_mean(tf.squared_difference(self.q_target, self.double_q))
+            self.loss = tf.reduce_mean(tf.squared_difference(self.q_target, self.q_eval))
         with tf.variable_scope('train'):
             self._train_op = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
@@ -112,7 +113,7 @@ class DDQN:
             sample_index = np.random.choice(self.memory.memory_size, self.memory.batch_size)
         else:
             sample_index = np.random.choice(self.memory.memory_counter, self.memory.batch_size)
-        batch_memory = self.memory[sample_index, :]
+        batch_memory = self.memory.memory[sample_index, :]
 
         q_next, q_eval4next = self.sess.run(
             [self.q_next, self.q_eval],
@@ -122,7 +123,7 @@ class DDQN:
 
         q_target = q_eval.copy()
 
-        batch_index = np.arange(self.batch_size, dtype=np.int32)
+        batch_index = np.arange(self.memory.batch_size, dtype=np.int32)
         eval_act_index = batch_memory[:, self.n_features].astype(int)
         reward = batch_memory[:, self.n_features + 1]
 

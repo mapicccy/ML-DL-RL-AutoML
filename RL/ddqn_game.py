@@ -11,7 +11,7 @@ env = gym.make('Pendulum-v0')
 env = env.unwrapped
 env.seed(1)
 
-action_space = 11,
+action_space = 11
 n_features = 3
 memory = Memory(n_features, 3000, n_features * 2 + 2, 32)
 
@@ -40,10 +40,10 @@ def train(RL):
 
         RL.store_transition(observation, action, reward, observation_)
 
-        if step > RL.memory.memory_size:
+        if step > 200:
             RL.learn()
 
-        if step - RL.memory.memory_size > 20000:
+        if step > 20000:
             break
 
         observation = observation_
@@ -52,4 +52,3 @@ def train(RL):
     return RL.q
 
 q_dqn = train(dqn)
-
