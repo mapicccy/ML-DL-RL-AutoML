@@ -10,6 +10,7 @@ class DDQN:
                  n_actions,
                  n_features,
                  memory,
+                 name='ddqn',
                  learning_rate=0.001,
                  reward_delay=0.9,
                  e_greedy=0.9,
@@ -21,6 +22,7 @@ class DDQN:
         self.n_actions = n_actions
         self.n_features = n_features
         self.memory = memory
+        self.name = name
         self.lr = learning_rate
         self.gamma = reward_delay
         self.epsilon_max = e_greedy
@@ -88,6 +90,9 @@ class DDQN:
         transition = np.hstack((s, [a, r], s_))
         self.memory.save(transition)
 
+    def set_replace_target_iter(self, n):
+        self.replace_target_iter = n
+
     def choose_action(self, observation):
         observation = observation[np.newaxis, :]
         action_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
@@ -106,7 +111,7 @@ class DDQN:
     def learn(self):
         if self.learn_step_counter % self.replace_target_iter == 0:
             self.sess.run(self.replace_target_op)
-            print('\ntarget params replaced\n')
+            # print('\ntarget params replaced\n')
 
         if self.memory.memory_counter > self.memory.memory_size:
             sample_index = np.random.choice(self.memory.memory_size, self.memory.batch_size)
