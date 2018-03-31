@@ -11,6 +11,12 @@ algorithm:
 
 ![dqn_algorithm](./images/dqn_algorithm.png)
 
+result on CartPole:
+
+result on MountainCar:
+
+![run_mountain_car_on_dqn](./images/run_mountain_car_on_dqn.PNG)
+
 ### Actor-Critic
 algorithm:
 
