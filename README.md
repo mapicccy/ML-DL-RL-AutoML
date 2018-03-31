@@ -13,7 +13,7 @@ algorithm:
 
 result on CartPole:
 
-result on MountainCar:
+result on MountainCar:learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps = 200
 
 ![run_mountain_car_on_dqn](./images/run_mountain_car_on_dqn.PNG)
 
