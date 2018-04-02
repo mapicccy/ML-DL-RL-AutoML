@@ -108,6 +108,10 @@ class DDQN:
             action = np.random.randint(0, self.n_actions)
         return action
 
+    def action_value(self, observation):
+        observation = observation[np.newaxis, :]
+        return self.sess.run(self.q_eval, feed_dict={self.s: observation})
+
     def learn(self):
         if self.learn_step_counter % self.replace_target_iter == 0:
             self.sess.run(self.replace_target_op)
