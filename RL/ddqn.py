@@ -52,13 +52,13 @@ class DDQN:
     def _build_net(self):
         def build_layers(s, c_names, n_l1, w_initializer, b_initializer):
             with tf.variable_scope('l1'):
-                w1 = tf.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names)
-                b1 = tf.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names)
+                w1 = tf.get_variable(self.name + 'w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names)
+                b1 = tf.get_variable(self.name + 'b1', [1, n_l1], initializer=b_initializer, collections=c_names)
                 l1 = tf.nn.relu(tf.matmul(s, w1) + b1)
 
             with tf.variable_scope('l2'):
-                w2 = tf.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names)
-                b2 = tf.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names)
+                w2 = tf.get_variable(self.name + 'w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names)
+                b2 = tf.get_variable(self.name + 'b2', [1, self.n_actions], initializer=b_initializer, collections=c_names)
                 out = tf.matmul(l1, w2) + b2
 
             return out
