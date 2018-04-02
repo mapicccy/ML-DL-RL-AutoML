@@ -13,23 +13,23 @@ algorithm:
 
 result on CartPole:
 
-result on MountainCar: ##learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps = 200, set_replace_target_iter = 200
+result on MountainCar: ##learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 200, set_replace_target_iter = 200
 
 ![run_mountain_car_on_dqn](./images/run_mountain_car_on_dqn.PNG)
 
-result on MountainCar: ##learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps = 100, set_replace_target_iter = 200
+result on MountainCar: ##learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 100, set_replace_target_iter = 200
 
 ![run_mountain_car_on_dqn](./images/run_mountain_car_on_dqn_diff.PNG)
 
-result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps = 0, set_replace_target_iter = 200
+result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 0, set_replace_target_iter = 200
 
 ![run_mountain_car_on_dqn_no_iter](./images/run_mountain_car_on_dqn_no_iter.PNG)
 
-result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps = 0, set_replace_target_iter = 2000
+result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 0, set_replace_target_iter = 2000
 
 ![run_mountain_car_on_dqn_iter_2000](./images/run_mountain_car_on_dqn_iter_2000.PNG)
 
-result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps = 0, set_replace_target_iter = 2000
+result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 0, set_replace_target_iter = 5step
 ![run_mountain_car_on_dqn_iter_5step](./images/run_mountain_car_on_dqn_iter_5step.PNG)
 
 we can see that different start_learning_step leads to totally different results
