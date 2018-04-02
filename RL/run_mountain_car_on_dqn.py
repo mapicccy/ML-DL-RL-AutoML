@@ -1,7 +1,8 @@
-import gym
 import sys
-import tensorflow as tf
+
+import gym
 import numpy as np
+import tensorflow as tf
 
 sys.path.append('./')
 from ddqn import DDQN
@@ -109,13 +110,37 @@ for episode in range(NUM_EPISODE):
     sum_reward = 0
     state = env.reset()
     while True:
-        env.render()
+        # env.render()
         step += 1
-        action_value = np.ones(n_actions)
-        # TODO ...
+        action_values = np.ones(n_actions)
+        actions = []
+        for i in range(len(dqn)):
+            value = dqn[i].action_value(state)
+            actions.append(np.argmax(value) if i == 0 else np.argmin(value))
+            active_values = action_values * ((100 + value) if i == 0 else (100 - value))
 
+        action = np.argmax(action_values)
+
+        state_, reward, done, _ = env.step(action)
+
+        if done:
+            reward = 30
+
+        # if np.amin(actions) != np.amax(actions):
+        #     for i in range(len(dqn)):
+        #         new_reward = reward if i == 0 else -reward
+        #         dqn[i].store_transition(state, action, new_reward, state_)
+
+        sum_reward += reward
+        state = state_
+
+        if done or step > 1999:
+            episode_reward.append(step)
+            print('episode', episode, 'step', step)
+            break
 
 import matplotlib.pyplot as plt
 plt.scatter(np.arange(len(episode_position)), episode_position, s=7, marker='o')
 plt.scatter(np.arange(len(episode_negative)), episode_negative, s=7, marker='o')
+plt.scatter(np.arange(len(episode_reward)), episode_reward, s=7, marker='o')
 plt.show()
