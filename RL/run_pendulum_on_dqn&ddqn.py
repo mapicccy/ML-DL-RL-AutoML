@@ -22,29 +22,6 @@ n_features = 3
 memory0 = Memory(n_features, MEMORY_CAPACITY, n_features * 2 + 2, BATCH_SIZE)
 memory1 = Memory(n_features, MEMORY_CAPACITY, n_features * 2 + 2, BATCH_SIZE)
 
-# sess = tf.Session()
-# with tf.variable_scope('dqn'):
-#     dqn = DDQN(n_actions=action_space,
-#                n_features=n_features,
-#                memory=memory0,
-#                name='dqn',
-#                learning_rate=LEARNING_RATE,
-#                e_greedy_increment=0.001,
-#                double_q=False,
-#                sess=sess)
-#
-# with tf.variable_scope('ddqn'):
-#     ddqn = DDQN(n_actions=action_space,
-#                 n_features=n_features,
-#                 memory=memory1,
-#                 name='ddqn',
-#                 learning_rate=LEARNING_RATE,
-#                 e_greedy_increment=0.001,
-#                 double_q=True,
-#                 sess=sess)
-#
-# sess.run(tf.global_variables_initializer())
-
 sess0 = tf.Session()
 sess1 = tf.Session()
 dqn = [DDQN(action_space,
