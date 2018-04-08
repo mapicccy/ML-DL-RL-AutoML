@@ -127,6 +127,5 @@ for episode in range(NUM_EPISODE):
 
 import matplotlib.pyplot as plt
 plt.scatter(np.arange(len(episode_position)), episode_position, s=7, marker='o')
-plt.scatter(np.arange(len(episode_negative)), episode_negative, s=7, marker='o')
 plt.scatter(np.arange(len(episode_reward)), episode_reward, s=7, marker='o')
 plt.show()
