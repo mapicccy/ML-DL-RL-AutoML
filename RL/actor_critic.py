@@ -50,7 +50,8 @@ class Actor(object):
 
     def action_probs(self, s):
         s = s[np.newaxis, :]
-        return self.sess.run(self.acts_prob, {self.s: s})
+        action_probs = self.sess.run(self.acts_prob, {self.s: s})
+        return action_probs[0]
 
 
 class Critic(object):
