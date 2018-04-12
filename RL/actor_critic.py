@@ -8,13 +8,14 @@ GAMMA = 0.9
 
 
 class Actor(object):
-    def __init__(self, sess, n_features, n_actions, lr=0.001):
+    def __init__(self, sess, n_features, n_actions, name='actor', lr=0.001):
         self.sess = sess
+        self.name = name
         self.s = tf.placeholder(tf.float32, [1, n_features], 'state')
         self.a = tf.placeholder(tf.int32, None, 'act')
         self.td_error = tf.placeholder(tf.float32, None, 'td_error')
 
-        with tf.variable_scope('Actor'):
+        with tf.variable_scope(self.name + 'Actor'):
             l1 = tf.layers.dense(inputs=self.s,
                                  units=20,
                                  activation=tf.nn.relu,
@@ -29,11 +30,11 @@ class Actor(object):
                                              bias_initializer=tf.constant_initializer(0.1),
                                              name='acts_prob')
 
-        with tf.variable_scope('exp_v'):
+        with tf.variable_scope(self.name + 'exp_v'):
             log_prob = tf.log(self.acts_prob[0, self.a])
             self.exp_v = tf.reduce_mean(log_prob * self.td_error)
 
-        with tf.variable_scope('train'):
+        with tf.variable_scope(self.name + 'train'):
             self.train_op = tf.train.AdamOptimizer(lr).minimize(-self.exp_v)
 
     def learn(self, s, a, td):
@@ -55,13 +56,14 @@ class Actor(object):
 
 
 class Critic(object):
-    def __init__(self, sess, n_features, lr=0.001):
+    def __init__(self, sess, n_features, name='critic', lr=0.001):
         self.sess = sess
+        self.name = name
         self.s = tf.placeholder(tf.float32, [1, n_features], name='state')
         self.v_ = tf.placeholder(tf.float32, [1, 1], name='v_next')
         self.r = tf.placeholder(tf.float32, None, name='r')
 
-        with tf.variable_scope('Critic'):
+        with tf.variable_scope(self.name + 'Critic'):
             l1 = tf.layers.dense(inputs=self.s,
                                  units=20,
                                  activation=tf.nn.relu,
@@ -76,11 +78,11 @@ class Critic(object):
                                      bias_initializer=tf.constant_initializer(.1),
                                      name='v')
 
-        with tf.variable_scope('squared_TD_error'):
+        with tf.variable_scope(self.name + 'squared_TD_error'):
             self.td_error = self.r + GAMMA * self.v_ - self.v
             self.loss = tf.square(self.td_error)
 
-        with tf.variable_scope('train'):
+        with tf.variable_scope(self.name + 'train'):
             self.train_op = tf.train.AdamOptimizer(lr).minimize(self.loss)
 
     def learn(self, s, r, s_):
