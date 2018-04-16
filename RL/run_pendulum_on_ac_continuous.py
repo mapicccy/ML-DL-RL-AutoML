@@ -59,7 +59,6 @@ class Actor(object):
     def choose_action(self, s):
         s = s[np.newaxis, :]
         action_probs = self.sess.run(self.action, {self.s: s})
-        # print(action_probs)
         return action_probs
 
     def action_probs(self, s):
@@ -108,8 +107,8 @@ class Critic(object):
 MAX_EPISODE = 1000
 MAX_EP_STEP = 2000
 GAMMA = 0.9
-LR_A = 0.001
-LR_C = 0.01
+LR_A = 0.0001
+LR_C = 0.001
 
 env = gym.make('Pendulum-v0')
 env = env.unwrapped
@@ -124,51 +123,38 @@ action_space_high = env.action_space.high
 # sess.run(tf.global_variables_initializer())
 sess0 = tf.Session()
 sess1 = tf.Session()
-rl = [[Actor(sess0, n_features, action_space=[-action_space_high, action_space_high], name='actor0', lr=LR_A),
-       Critic(sess0, n_features, name='critic0', lr=LR_C)],
-      [Actor(sess1, n_features, action_space=[-action_space_high, action_space_high], name='actor1', lr=LR_A),
-       Critic(sess1, n_features, name='critic1', lr=LR_C)]]
+rl = [Actor(sess0, n_features, action_space=[-action_space_high, action_space_high], name='actor0', lr=LR_A),
+      Critic(sess0, n_features, name='critic0', lr=LR_C),
+      Critic(sess1, n_features, name='critic1', lr=LR_C)]
 sess0.run(tf.global_variables_initializer())
 sess1.run(tf.global_variables_initializer())
 
 episode_positive = []
 episode_negative = []
 for episode in range(MAX_EPISODE):
-    for i in range(len(rl)):
-        step = 0
-        sum_reward = 0
-        state = env.reset()
-        while True:
-            action = rl[i][0].choose_action(state)
-            state_, reward, done, _ = env.step(action)
-
-            reward /= 10
-
-            new_reward = reward if i == 0 else -reward
-
-            td_error = rl[i][1].learn(state, new_reward, state_)
-            rl[i][0].learn(state, action, td_error)
-
-            state = state_
-            step += 1
-            sum_reward += reward
-
-            if step > MAX_EP_STEP:
-                if i == 0:
-                    episode_positive.append(sum_reward)
-                else:
-                    episode_negative.append(sum_reward)
-                print(i, episode, sum_reward)
-                break
-
     step = 0
     sum_reward = 0
     state = env.reset()
-    # while True:
-    #     action = rl[0][0].choose_action(state)
+    while True:
+        action = rl[0].choose_action(state)
+        state_, reward, done, _ = env.step(action)
+
+        reward /= 10
+
+        td_error_positive = rl[1].learn(state, reward, state_)
+        td_error_negative = rl[2].learn(state, -reward, state_)
+        rl[0].learn(state, action, td_error_positive/(abs(td_error_negative) + 1))
+
+        state = state_
+        step += 1
+        sum_reward += reward
+
+        if step > MAX_EP_STEP:
+            episode_positive.append(sum_reward)
+            print(episode, sum_reward)
+            break
 
 import matplotlib.pyplot as plt
 
 plt.scatter(np.arange(len(episode_positive)), episode_positive, s=3, marker='o')
-plt.scatter(np.arange(len(episode_negative)), episode_negative, s=3, marker='o')
 plt.show()
