@@ -17,7 +17,7 @@ class Actor(object):
 
         with tf.variable_scope(self.name + 'Actor'):
             l1 = tf.layers.dense(inputs=self.s,
-                                 units=20,
+                                 units=30,
                                  activation=tf.nn.relu,
                                  kernel_initializer=tf.random_normal_initializer(0.0, 0.1),
                                  bias_initializer=tf.constant_initializer(0.1),
@@ -65,7 +65,7 @@ class Critic(object):
 
         with tf.variable_scope(self.name + 'Critic'):
             l1 = tf.layers.dense(inputs=self.s,
-                                 units=20,
+                                 units=30,
                                  activation=tf.nn.relu,
                                  kernel_initializer=tf.random_normal_initializer(0., .1),
                                  bias_initializer=tf.constant_initializer(.1),
