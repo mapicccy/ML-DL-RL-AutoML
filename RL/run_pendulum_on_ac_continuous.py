@@ -104,7 +104,7 @@ class Critic(object):
         return td_error
 
 
-MAX_EPISODE = 1000
+MAX_EPISODE = 600
 MAX_EP_STEP = 2000
 GAMMA = 0.9
 LR_A = 0.0001
@@ -117,10 +117,6 @@ env.seed(1)
 n_features = env.observation_space.shape[0]
 action_space_high = env.action_space.high
 
-# sess = tf.Session()
-# actor = Actor(sess, n_features, action_space=[-action_space_high, action_space_high], name='actor', lr=LR_A)
-# critic = Critic(sess, n_features, name='critic', lr=LR_C)
-# sess.run(tf.global_variables_initializer())
 sess0 = tf.Session()
 sess1 = tf.Session()
 rl = [Actor(sess0, n_features, action_space=[-action_space_high, action_space_high], name='actor0', lr=LR_A),
@@ -143,7 +139,7 @@ for episode in range(MAX_EPISODE):
 
         td_error_positive = rl[1].learn(state, reward, state_)
         td_error_negative = rl[2].learn(state, -reward, state_)
-        rl[0].learn(state, action, td_error_positive/(abs(td_error_negative) + 1))
+        rl[0].learn(state, action, td_error_positive)
 
         state = state_
         step += 1
