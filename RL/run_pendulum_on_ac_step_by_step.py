@@ -13,7 +13,7 @@ env = gym.make('Pendulum-v0')
 env = env.unwrapped
 env.seed(1)
 
-MAX_EPISODE = 1000
+MAX_EPISODE = 600
 n_features = 3
 action_space = 401
 
@@ -63,6 +63,7 @@ for episode in range(MAX_EPISODE):
     while True:
         action_values = rl[0][0].action_probs(state) - rl[1][0].action_probs(state)
         action_values[action_values < 0] = 0
+        # action_values[action_values > 1] = 1
         action_values = action_values/action_values.sum()
         action = np.random.choice(np.arange(len(action_values)), p=action_values)
         f_action = (action - (action_space - 1) / 2) / ((action_space - 1) / 4)
