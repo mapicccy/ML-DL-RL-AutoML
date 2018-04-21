@@ -55,56 +55,57 @@ episode_position = []
 episode_negative = []
 total_step = [0, 0]
 for episode in range(NUM_EPISODE):
-    sum_reward = 0
-    step = 0
-    state = env.reset()
-    while True:
-        step += 1
-        total_step[i] += 1
+    for i in range(len(dqn)):
+        sum_reward = 0
+        step = 0
+        state = env.reset()
+        while True:
+            step += 1
+            total_step[i] += 1
 
-        # regular way for position and negative network
-        action = dqn[0].choose_action(state)
+            # regular way for position and negative network
+            action = dqn[0].choose_action(state)
 
-        # another way
-        # action_value = dqn[i].action_value(state)
-        # action = np.argmax(action_value) if i == 0 else np.argmin(action_value)
-        # if np.random.uniform() > dqn[i].epsilon:
-        #     action = np.random.randint(0, n_actions)
+            # another way
+            # action_value = dqn[i].action_value(state)
+            # action = np.argmax(action_value) if i == 0 else np.argmin(action_value)
+            # if np.random.uniform() > dqn[i].epsilon:
+            #     action = np.random.randint(0, n_actions)
 
-        state_, reward, done, _ = env.step(action)
+            state_, reward, done, _ = env.step(action)
 
-        # this condition considering the velocity
-        if done:
-            reward = 30
-        else:
-            reward = abs(state[0] - state_[0])
+            # this condition considering the velocity
+            if done:
+                reward = 30
+            else:
+                reward = abs(state[0] - state_[0])
 
-        # if done:
-        #     reward = 30
+            # if done:
+            #     reward = 30
 
-        dqn[0].store_transtion(state, action, reward, state_)
-        if reward != 30:
-            dqn[1].store_transtion(state, action, -reward*100, state_)
-        else:
-            dqn[1].store_transition(state, action, -reward, state_)
+            dqn[0].store_transtion(state, action, reward, state_)
+            if reward != 30:
+                dqn[1].store_transtion(state, action, -reward*100, state_)
+            else:
+                dqn[1].store_transition(state, action, -reward, state_)
 
-        # this condition is to get a good result relatively
-        # if step > 200 and step % 5 == 0:
-        #     dqn[i].learn()
+            # this condition is to get a good result relatively
+            # if step > 200 and step % 5 == 0:
+            #     dqn[i].learn()
 
-        # this condition is to get the best result
-        if (total_step[i] > 200) and step % 5 == 0:
-            dqn[i].learn()
+            # this condition is to get the best result
+            if (total_step[i] > 200) and step % 5 == 0:
+                dqn[i].learn()
 
-        sum_reward += reward
-        state = state_
+            sum_reward += reward
+            state = state_
 
-        if done or step > 1999:
-            print(dqn[0].name, episode, step)
-            episode_position.append(step)
-            dqn[0].set_replace_target_iter(5 * step)
-            dqn[1].set_replace_target_iter(5 * step)
-            break
+            if done or step > 1999:
+                print(dqn[0].name, episode, step)
+                episode_position.append(step)
+                dqn[0].set_replace_target_iter(5 * step)
+                dqn[1].set_replace_target_iter(5 * step)
+                break
 
     step = 0
     state = env.reset()
