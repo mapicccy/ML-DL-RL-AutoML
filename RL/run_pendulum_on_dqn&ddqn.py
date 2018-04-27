@@ -71,14 +71,27 @@ for episode in range(NUM_EPISODE):
             if step > 2000:
                 if i == 0:
                     episode_position.append(sum_reward)
-                else:
-                    episode_negative.append(sum_reward)
                 print(dqn[i].name, episode, sum_reward)
                 break
 
             state = state_
             step += 1
             total_step[i] += 1
+
+    sum_reward = 0
+    step = 0
+    state = env.reset()
+    while True:
+        action_values = dqn[1].action_value(state)
+        action = np.argmin(action_values)
+        f_action = (action - (action_space - 1) / 2) / ((action_space - 1) / 4)
+        state_, reward, done, info = env.step(np.array([f_action]))
+        reward /= 10
+        sum_reward += reward
+        state = state_
+        if step > 2000:
+            episode_negative.append(sum_reward)
+            break
 
     sum_reward = 0
     step = 0
