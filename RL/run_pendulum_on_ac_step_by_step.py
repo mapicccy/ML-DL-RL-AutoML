@@ -52,10 +52,26 @@ for episode in range(MAX_EPISODE):
             if step > 2000:
                 if i == 0:
                     episode_positive.append(sum_reward)
-                else:
-                    episode_negative.append(sum_reward)
                 print(i, episode, sum_reward)
                 break
+
+    step = 0
+    sum_reward = 0
+    state = env.reset()
+    while True:
+        action_values = 1 - rl[1][0].action_probs(state)
+        action_values = action_values/action_values.sum()
+        action = np.random.choice(np.arange(len(action_values)), p=action_values)
+        f_action = (action - (action_space - 1) / 2) / ((action_space - 1) / 4)
+        state_, reward, done, _ = env.step(np.array([f_action]))
+
+        reward /= 10
+        sum_reward += reward
+        step += 1
+        state = state_
+        if step > 2000:
+            episode_negative.append(sum_reward)
+            break
 
     step = 0
     sum_reward = 0

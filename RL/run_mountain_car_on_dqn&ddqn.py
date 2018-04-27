@@ -55,7 +55,7 @@ episode_position = []
 episode_negative = []
 total_step = [0, 0]
 for episode in range(NUM_EPISODE):
-    for i in range(len(dqn)):
+    for i in range(1):
         sum_reward = 0
         step = 0
         state = env.reset()
@@ -95,7 +95,8 @@ for episode in range(NUM_EPISODE):
 
             # this condition is to get the best result
             if (total_step[i] > 200) and step % 5 == 0:
-                dqn[i].learn()
+                dqn[0].learn()
+                dqn[1].learn()
 
             sum_reward += reward
             state = state_
