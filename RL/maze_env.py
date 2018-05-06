@@ -9,8 +9,8 @@ else:
     import tkinter as tk
 
 UNIT = 40  # pixels
-MAZE_H = 10  # grid height
-MAZE_W = 10 # grid width
+MAZE_H = 5  # grid height
+MAZE_W = 5 # grid width
 
 
 class Maze(tk.Tk, object):
@@ -44,7 +44,6 @@ class Maze(tk.Tk, object):
         for i in range(1, MAZE_W - 1):
             count = MAZE_H - 1 - count
             h = random.sample(list(np.arange(MAZE_H)), count)
-            print(count, h)
             for j in range(len(h)):
                 self.hell.append([i, h[j]])
 
@@ -56,19 +55,6 @@ class Maze(tk.Tk, object):
                 hell_center[0] + 15, hell_center[1] + 15,
                 fill='black'
             ))
-
-        # hell
-        # hell1_center = origin + np.array([UNIT * 2, UNIT])
-        # self.hell1 = self.canvas.create_rectangle(
-        #     hell1_center[0] - 15, hell1_center[1] - 15,
-        #     hell1_center[0] + 15, hell1_center[1] + 15,
-        #     fill='black')
-        # hell
-        # hell2_center = origin + np.array([UNIT, UNIT * 2])
-        # self.hell2 = self.canvas.create_rectangle(
-        #     hell2_center[0] - 15, hell2_center[1] - 15,
-        #     hell2_center[0] + 15, hell2_center[1] + 15,
-        #     fill='black')
 
         # create oval
         oval_center = origin + UNIT * (MAZE_H - 1)
