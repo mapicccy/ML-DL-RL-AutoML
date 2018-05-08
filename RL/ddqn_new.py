@@ -89,15 +89,15 @@ class DoubleDQN:
 
         with tf.variable_scope('eval_net'):
             c_names, n_l1, w_initializer, b_initializer = \
-            ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 128, \
-            tf.random_normal_initializer(0., 0.3), tf.constant_initializer(0.1) # config of layers
+                ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 128, \
+                tf.random_normal_initializer(0., 0.3), tf.constant_initializer(0.1) # config of layers
 
             self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer)
 
-            with tf.variable_scope('loss'):
-                self.loss = tf.reduce_mean(tf.squared_difference(self.q_target, self.q_eval))
-            with tf.variable_scope('train'):
-                self._train_op = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
+        with tf.variable_scope('loss'):
+            self.loss = tf.reduce_mean(tf.squared_difference(self.q_target, self.q_eval))
+        with tf.variable_scope('train'):
+            self._train_op = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
         # —————— build target_net ——————
         self.s_ = tf.placeholder(tf.float32, [None, self.n_features], name='s_') # input
@@ -114,8 +114,8 @@ class DoubleDQN:
         if not hasattr(self, 'q'): # record action value it gets
             self.q = []
             self.running_q = 0
-            self.running_q = self.running_q*0.99 + 0.01 * np.max(actions_value)
-            self.q.append(self.running_q)
+        self.running_q = self.running_q*0.99 + 0.01 * np.max(actions_value)
+        self.q.append(self.running_q)
 
         if np.random.uniform() > self.epsilon: # choosing action
             action = np.random.randint(0, self.n_actions)
@@ -133,7 +133,7 @@ class DoubleDQN:
         batch_memory = self.memory.batch_load(sample_index, self.reward_offset)
         q_next, q_eval4next = self.sess.run([self.q_next, self.q_eval],
                                             feed_dict={self.s_: batch_memory[:, -self.n_features:], # next observation for target net
-                                            self.s: batch_memory[:, -self.n_features:]}) # next observation for main net
+                                                       self.s: batch_memory[:, -self.n_features:]}) # next observation for main net
         return q_next, q_eval4next
 
     def learn(self, samples=None, q_mod_eval=None, q_mod_target=None, q_mod_rate=None):
@@ -154,7 +154,7 @@ class DoubleDQN:
 
         q_next, q_eval4next = self.sess.run([self.q_next, self.q_eval],
                                             feed_dict={self.s_: batch_memory[:, -self.n_features:], # next observation for target net
-                                            self.s: batch_memory[:, -self.n_features:]}) # next observation for main net
+                                                       self.s: batch_memory[:, -self.n_features:]}) # next observation for main net
         q_eval = self.sess.run(self.q_eval, {self.s: batch_memory[:, :self.n_features]})
 
         q_target = q_eval.copy()
@@ -187,7 +187,7 @@ class DoubleDQN:
             if self.double_q:
                 if q_mod_eval is not None and q_mod_target is not None and q_mod_rate is not None:
                     q_eval4next = self.c(q_eval4next, q_mod_eval, q_mod_rate)
-                    max_act4next = np.argmax(q_eval4next, axis=1) # the action that brings the highest value is evaluated by q_eval
+                max_act4next = np.argmax(q_eval4next, axis=1) # the action that brings the highest value is evaluated by q_eval
                 selected_q_next = q_next[batch_index, max_act4next] # Double DQN, select q_next depending on above actions
             else: # Natural DQN
                 if q_mod_target is not None and q_mod_rate is not None:
@@ -205,4 +205,5 @@ class DoubleDQN:
         self.cost_his.append(self.cost)
 
         self.epsilon = self.epsilon + self.epsilon_increment if self.epsilon < self.epsilon_max else self.epsilon_max
-        self.learn_step_counter += 1 # print(self.learn_step_counter, self.last_replace_target,self.replace_target_iter) return q_next, q_eval4next
+        self.learn_step_counter += 1 # print(self.learn_step_counter, self.last_replace_target,self.replace_target_iter)
+        return q_next, q_eval4next

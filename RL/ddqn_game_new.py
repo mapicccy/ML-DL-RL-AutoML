@@ -1,11 +1,9 @@
 import gym
 import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
 from ddqn_new import DoubleDQN
 from config import *
 from memory_new import Memory
-import matplotlib.pyplot as plt
 
 def volatility(r):
     l = len(r) - 1
@@ -105,7 +103,7 @@ class Game(object):
                             episode_positive.append(sum_reward)
                             print(self.rls[i].name, episode, 'sum_reward=', sum_reward)
                             # self.rls[i].set_replace_target_iter(UPPER_LIMIT)
-                            break
+                        break
 
             sum_reward = 0
             step = 0
@@ -138,7 +136,8 @@ class Game(object):
                     episode_reward.append(sum_reward)
                     print('-------------- mix: sum_reward=', sum_reward)
                     break
-        # end of game self.env.close()
+        # end of game
+        self.env.close()
 
         import matplotlib.pyplot as plt
         plt.xlabel('episode')
@@ -185,6 +184,55 @@ def PendulumDQN(algo_type="classic"):
     memory1 = Memory(n_features, MEMORY_CAPACITY, n_features * 2 + ACTION_DIM + 1, BATCH_SIZE)
     rl0 = DoubleDQN(n_actions=action_space,
                     n_features=n_features,
+                    name='dqn0',
+                    memory=memory0,
+                    learning_rate=0.001,
+                    reward_decay=0.9,
+                    e_greedy=0.95,
+                    e_greedy_increment=0.00001,
+                    double_q=False,
+                    reward_transform=original,
+                    reverse=False, reward_offset=0,
+                    algo_type=algo_type,
+                    combine=c_func)
+    rl1 = DoubleDQN(n_actions=action_space,
+                    n_features=n_features,
+                    name='dqn1',
+                    memory=memory1,
+                    learning_rate=0.001,
+                    reward_decay=0.9,
+                    e_greedy=0.95,
+                    e_greedy_increment=0.00001,
+                    double_q=False,
+                    reward_transform=negative,
+                    reverse=True,
+                    reward_offset=0,
+                    algo_type=algo_type,
+                    combine=c_func)
+    game = Game(env, [rl0, rl1], combine=c_func)
+    if algo_type is "classic":
+        print(algo_type, " Pendulum DQN/ ", "mix/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9")
+        game.run_pendulum_mix(action_space)
+    else:
+        print(algo_type, " Pendulum DQN/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9 ", "lambda=0.5/0.5")
+        game.run_pendulum_SeparateSample(use_q_mod=False, mixed_sample=False, q_mod_rate=[0.5, 0.5], test_rate=0.5)
+
+
+def PendulumDDQN(algo_type="classic"):
+    np.random.seed(1)
+    tf.set_random_seed(1) # reproducible
+    env = gym.make('Pendulum-v0')
+    env = env.unwrapped
+    env.seed(1)
+    env.reset()
+    # n_actions = env.action_space.n
+    # n_features = env.state.shape[0]
+    action_space = 11
+    n_features = 3
+    memory0 = Memory(n_features, MEMORY_CAPACITY, n_features * 2 + ACTION_DIM + 1, BATCH_SIZE)
+    memory1 = Memory(n_features, MEMORY_CAPACITY, n_features * 2 + ACTION_DIM + 1, BATCH_SIZE)
+    rl0 = DoubleDQN(n_actions=action_space,
+                    n_features=n_features,
                     name='ddqn0',
                     memory=memory0,
                     learning_rate=0.001,
@@ -216,7 +264,7 @@ def PendulumDQN(algo_type="classic"):
         game.run_pendulum_mix(action_space)
     else:
         print(algo_type, " Pendulum DQN/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9 ", "lambda=0.5/0.5")
-        game.run_pendulum_SeparateSample(use_q_mod=True, mixed_sample=True, q_mod_rate=[0.5, 0.5], test_rate=0.5)
+        game.run_pendulum_SeparateSample(use_q_mod=False, mixed_sample=False, q_mod_rate=[0.5, 0.5], test_rate=0.5)
 
 
 if __name__ == "__main__":
@@ -226,4 +274,5 @@ if __name__ == "__main__":
     #  CartPoleDDQN(algo_type="classic")
     #  MountainCarDQN(algo_type="new_algo_2")
     # MountainCarDDQN(algo_type="new_algo_2")
-    PendulumDQN(algo_type="new_algo_2")
+    # PendulumDQN(algo_type="new_algo_2")
+    PendulumDDQN(algo_type="new_algo_2")
