@@ -25,10 +25,10 @@ class DDQN:
         self.name = name
         self.lr = learning_rate
         self.gamma = reward_delay
-        self.epsilon_max = e_greedy
+        self.epsilon_max = 0.9999
         self.replace_target_iter = replace_target_iter
         self.epsilon_increment = e_greedy_increment
-        self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
+        self.epsilon = e_greedy
         self.double_q = double_q
         self.learn_step_counter = 0
 
