@@ -30,7 +30,7 @@ dqn = [DDQN(action_space,
             name='dqn0',
             learning_rate=LEARNING_RATE,
             e_greedy_increment=0.001,
-            double_q=True,
+            double_q=False,
             sess=sess0),
        DDQN(action_space,
             n_features,
@@ -38,7 +38,7 @@ dqn = [DDQN(action_space,
             name='dqn1',
             learning_rate=LEARNING_RATE,
             e_greedy_increment=0.001,
-            double_q=True,
+            double_q=False,
             sess=sess1)]
 
 sess0.run(tf.global_variables_initializer())
@@ -68,15 +68,15 @@ for episode in range(NUM_EPISODE):
             if total_step[i] > 200:
                 dqn[i].learn()
 
-            if step > 2000:
-                if i == 0:
-                    episode_position.append(sum_reward)
-                print(dqn[i].name, episode, sum_reward)
-                break
-
             state = state_
             step += 1
             total_step[i] += 1
+
+            if step > 2000:
+                if i == 0:
+                    episode_position.append(sum_reward)
+                    print(dqn[i].name, episode, sum_reward)
+                break
 
     sum_reward = 0
     step = 0
@@ -89,6 +89,7 @@ for episode in range(NUM_EPISODE):
         reward /= 10
         sum_reward += reward
         state = state_
+        step += 1
         if step > 2000:
             episode_negative.append(sum_reward)
             break
@@ -105,13 +106,12 @@ for episode in range(NUM_EPISODE):
         reward /= 10
         sum_reward += reward
         state = state_
+        step += 1
 
         if step > 2000:
             episode_mix.append(sum_reward)
             print('---------episode', episode, 'sum_reward', sum_reward)
             break
-
-        step += 1
 
 import matplotlib.pyplot as plt
 plt.scatter(np.arange(len(episode_position)), episode_position, s=7, marker='o')
