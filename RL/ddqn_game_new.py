@@ -5,6 +5,7 @@ from ddqn_new import DoubleDQN
 from config import *
 from memory_new import Memory
 
+
 def volatility(r):
     l = len(r) - 1
     r = np.array(r)
@@ -12,6 +13,7 @@ def volatility(r):
     r1 = r[1:]
     ratio = r1 / r0 - 1
     return np.std(ratio)
+
 
 class Game(object):
     def __init__(self, env, rls, combine=None):
@@ -57,7 +59,7 @@ class Game(object):
                     if mixed_sample is False:
                         action = self.rls[i].choose_action(state)
                     else:
-                        if np.random.uniform() > self.rls[i].epsilon: # choosing action
+                        if np.random.uniform() > self.rls[i].epsilon:  # choosing action
                             action = np.random.randint(0, self.rls[i].n_actions)
                         else:
                             if i == 0:
@@ -66,7 +68,7 @@ class Game(object):
                                 action = self.mixed_choose_action(rl1, rl0, state, q_mod_rate[1])
 
                     # RL take action and get next observation and reward
-                    f_action = (action - (action_space - 1)/ 2)/ ((action_space - 1) / 4)
+                    f_action = (action - (action_space - 1) / 2) / ((action_space - 1) / 4)
                     state_, reward, done, _ = self.env.step(np.array([f_action]))
                     reward /= 10
                     sum_reward += reward
@@ -74,7 +76,7 @@ class Game(object):
                     transition = np.hstack((state, [action], [new_reward], state_))
                     self.rls[i].memory.save(transition)
 
-                    if total_step[i] > 200: # Train
+                    if total_step[i] > 200:  # Train
                         if use_q_mod is True:
                             if i == 0:
                                 sample_index = self.rls[0].memory.sampling()
@@ -152,26 +154,30 @@ class Game(object):
         plt.scatter(np.arange(len(episode_negative)), episode_negative, s=3, marker='o', c='r')
         plt.show()
 
+
 def original(r):
     return r
 
+
 def negative(r):
     return -r
+
 
 def c_func(q1, q2, rate):
     return rate * q1 + (1 - rate) * (-q2)
     # print(q1.shape)
     #  return -(q1 * q2)
-    r1 = np.argsort(np.argsort(q1))
-    r2 = np.argsort(np.argsort(-q2))
-    r = r1 + r2
-    # d = np.random.random(np.array(r.shape)) / 100
-    d = q1 * (-q2) / 1000000
-    return r + d
+    # r1 = np.argsort(np.argsort(q1))
+    # r2 = np.argsort(np.argsort(-q2))
+    # r = r1 + r2
+    # # d = np.random.random(np.array(r.shape)) / 100
+    # d = q1 * (-q2) / 1000000
+    # return r + d
+
 
 def PendulumDQN(algo_type="classic"):
     np.random.seed(1)
-    tf.set_random_seed(1) # reproducible
+    tf.set_random_seed(1)  # reproducible
     env = gym.make('Pendulum-v0')
     env = env.unwrapped
     env.seed(1)
@@ -215,12 +221,12 @@ def PendulumDQN(algo_type="classic"):
         game.run_pendulum_mix(action_space)
     else:
         print(algo_type, " Pendulum DQN/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9 ", "lambda=0.5/0.5")
-        game.run_pendulum_SeparateSample(use_q_mod=False, mixed_sample=False, q_mod_rate=[0.5, 0.5], test_rate=0.5)
+        game.run_pendulum_SeparateSample(use_q_mod=True, mixed_sample=True, q_mod_rate=[0.5, 0.5], test_rate=0.5)
 
 
 def PendulumDDQN(algo_type="classic"):
     np.random.seed(1)
-    tf.set_random_seed(1) # reproducible
+    tf.set_random_seed(1)  # reproducible
     env = gym.make('Pendulum-v0')
     env = env.unwrapped
     env.seed(1)
@@ -263,13 +269,13 @@ def PendulumDDQN(algo_type="classic"):
         print(algo_type, " Pendulum DQN/ ", "mix/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9")
         game.run_pendulum_mix(action_space)
     else:
-        print(algo_type, " Pendulum DQN/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9 ", "lambda=0.5/0.5")
-        game.run_pendulum_SeparateSample(use_q_mod=False, mixed_sample=False, q_mod_rate=[0.5, 0.5], test_rate=0.5)
+        print(algo_type, " Pendulum DDQN/ ", "lr=0.001/0.001/ ", "r= ", "gamma=0.9/0.9 ", "lambda=0.5/0.5")
+        game.run_pendulum_SeparateSample(use_q_mod=True, mixed_sample=True, q_mod_rate=[0.5, 0.5], test_rate=0.5)
 
 
 if __name__ == "__main__":
     np.random.seed(1)
-    tf.set_random_seed(1) # reproducible
+    tf.set_random_seed(1)  # reproducible
     #  CartPoleDQN(algo_type="new_algo_2")
     #  CartPoleDDQN(algo_type="classic")
     #  MountainCarDQN(algo_type="new_algo_2")

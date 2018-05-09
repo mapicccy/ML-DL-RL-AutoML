@@ -11,7 +11,7 @@ MEMORY_CAPACITY = 100000
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
 GAMMA = 0.9
-NUM_EPISODE = 2000
+NUM_EPISODE = 600
 
 env = gym.make('Pendulum-v0')
 env = env.unwrapped
