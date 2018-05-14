@@ -10,8 +10,10 @@ if os.path.exists(save_dir) is False:
 
 print(mnist.train.images.shape, mnist.train.labels.shape)
 
-for i in range(1):
+for i in range(2):
     image_raw = mnist.train.images[i, :]
     image = np.reshape(image_raw, [28, 28])
     filename = save_dir + 'image_minist_%d.jpg' % i
     misc.toimage(image, cmin=.0, cmax=1.).save(filename)
+
+    print(mnist.train.labels[i, :])
