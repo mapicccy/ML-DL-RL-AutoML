@@ -2,6 +2,6 @@
 ### Deep-Q-Network
 algorithm:
 
-![dqn_algorithm](RL/images/dqn_algorithm.png)
+![dqn_algorithm](images/dqn_algorithm.png)
 
-![DQN.PNG](RL/images/DQN.PNG)
+![DQN.PNG](images/DQN.PNG)
