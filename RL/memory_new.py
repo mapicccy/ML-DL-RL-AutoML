@@ -1,6 +1,7 @@
 import numpy as np
 from config import *
 
+
 class Memory(object):
     def __init__(self, n_features, memory_size, record_size, batch_size):
         self.policies = []
