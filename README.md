@@ -16,3 +16,5 @@ This theory is for NIPS-2018, and the code is under the directory 'ML-DL-RL-Auto
 
 ## AutoML
 Up to now, implementing traditional bayesian and gaussion process regressor by sklearn and skopt
+
+[Read more](./autoML/README.md)
