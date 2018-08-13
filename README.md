@@ -12,5 +12,7 @@ Further more, approving a general theory, The Worst is the Best, which improved 
 
 This theory is for NIPS-2018, and the code is under the directory 'ML-DL-RL-AutoML/RL/RL-extend-for-NIPS2018-paper'.
 
+[Read more](./RL/README.md)
+
 ## AutoML
 Up to now, implementing traditional bayesian and gaussion process regressor by sklearn and skopt
