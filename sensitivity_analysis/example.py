@@ -14,7 +14,7 @@ problem = {
 }
 
 params_values = saltelli.sample(problem, 1000)
-# print(params_values.shape)
+print(params_values.shape)
 
 Y = Ishigami.evaluate(params_values)
 Si = sobol.analyze(problem, Y, print_to_console=True)
