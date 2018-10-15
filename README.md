@@ -6,57 +6,15 @@ machine learning/deep learning/reinforcement learning/autoML
 ## DL
 
 ## RL
-### Deep-Q-Network
-algorithm:
+Up to now, implementing Q-learning\DQN\DDQN\Actor-Critic\DDPG.
 
-![dqn_algorithm](RL/images/dqn_algorithm.png)
+Further more, approving a general theory, The Worst is the Best, which improved DQN\DDQN\Actor-Critic on openai gym environment.
 
-result on CartPole:
+This theory is for NIPS-2018, and the code is under the directory 'ML-DL-RL-AutoML/RL/RL-extend-for-NIPS2018-paper'.
 
-result on MountainCar: ##learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 200, set_replace_target_iter = 200
-
-![run_mountain_car_on_dqn](RL/images/run_mountain_car_on_dqn.PNG)
-
-result on MountainCar: ##learning rate = 0.01, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 100, set_replace_target_iter = 200
-
-![run_mountain_car_on_dqn](RL/images/run_mountain_car_on_dqn_diff.PNG)
-
-result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 0, set_replace_target_iter = 200
-
-![run_mountain_car_on_dqn_no_iter](RL/images/run_mountain_car_on_dqn_no_iter.PNG)
-
-result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 0, set_replace_target_iter = 2000
-
-![run_mountain_car_on_dqn_iter_2000](RL/images/run_mountain_car_on_dqn_iter_2000.PNG)
-
-result on MountainCar: ##learning rate = 0.001, gamma = 0.9, episodes = 3000, steps of every episode = 2000, start learning steps(episode) = 0, set_replace_target_iter = 5step
-
-![run_mountain_car_on_dqn_iter_5step](RL/images/run_mountain_car_on_dqn_iter_5step.PNG)
-
-we can see that different start_learning_step leads to totally different results
-
-### Actor-Critic
-algorithm:
-
-result on CartPole:
-learning rate of Actor = 0.001, learning rate of Critic = 0.01, Gamma = 0.8
-episodes = 3000, steps of every episode = 1000
-
-![actor-critic](RL/images/actor-critic.png)
-
-function run_double build positive and negative network, but the result is still not so good as positive only network
-
-result of function run_double train positive network only on CartPole:
-![run_double_positive_only](RL/images/run_double_positive_only.png)
-
-result of function run_double train positive and negative network on CartPole:
-![run_double_positive_and negative](RL/images/run_double_positive_and_negative.png)
-
-result of run_pendulum_on_ac_step_by_step(update step by step, quantization):
-episode=2000, reward=(-1, 0), action_space=401. We really have a bad result.
-![run_pendulum_on_ac](RL/images/run_pendulum_on_ac.PNG)
-
-result of run_pendulum_on_ac_continously(update continously, not quantization):
-
+[Read more](./RL/README.md)
 
 ## AutoML
+Up to now, implementing traditional bayesian and gaussion process regressor by sklearn and skopt
+
+[Read more](./autoML/README.md)
