@@ -4,6 +4,11 @@ import tensorflow as tf
 class VGG16:
     def __init__(self, images, weights=None, sess=None):
         self.images = images
+        self.conv_layers()
+        self.fc_layers()
+        self.probs = tf.nn.softmax(self.fc3)
+        if weights is not None and sess is not None:
+            self.load_weights(weights, sess)
 
 
     def conv_layers(self):
@@ -130,4 +135,41 @@ class VGG16:
 
     def fc_layers(self):
         with tf.name_scope('fc1') as scope:
-            shape = int(np.prod())
+            shape = int(np.prod(self.pool5.get_shape()[1:]))
+            fc1w = tf.Variable(tf.truncated_normal([shape, 4096], dtype=tf.float32, stddev=1e-1), name='weights')
+            fc1b = tf.Variable(tf.constant(1., shape=[4096], dtype=tf.float32), trainable=True, name='biases')
+            pool5_flat = tf.reshape(self.pool5, [-1, shape])
+            fc1l = tf.nn.bias_add(tf.matmul(pool5_flat, fc1w), fc1b)
+            self.fc1 = tf.nn.relu(fc1l, name=scope)
+            self.params += [fc1w, fc1b]
+
+        with tf.name_scope('fc2') as scope:
+            fc2w = tf.Variable(tf.truncated_normal([4096, 4096], dtype=tf.float32, stddev=1e-1), name='weights')
+            fc2b = tf.Variable(tf.constant(1., shape=[4096], dtype=tf.float32), trainable=True, name='biases')
+            fc2l = tf.nn.bias_add(tf.matmul(self.fc1, fc2w), fc2b)
+            self.fc2 = tf.nn.relu(fc2l)
+            self.params += [fc2w, fc2b]
+
+        with tf.name_scope('fc3') as scope:
+            fc3w = tf.Variable(tf.truncated_normal([4096, 1000], dtype=tf.float32, stddev=1e-1), name='weights')
+            fc3b = tf.Variable(tf.constant(1., shape=[4096], dtype=tf.float32), trainable=True, name='biases')
+            fc3l = tf.nn.bias_add(tf.matmul(self.fc2, fc3w), fc3b)
+            self.fc3 = tf.nn.relu(fc2l)
+            self.params += [fc3w, fc3b]
+
+
+    def load_weights(self, weight_file, sess):
+        weights = np.load(weight_file)
+        keys = sorted(weights.keys())
+        for i, k in enumerate(keys):
+            print(i, k, np.shape[weights[k]])
+            sess.run(self.params[i].assign(weights[k]))
+
+
+if __name__ == '__main__':
+    sess = tf.Session()
+    images = tf.placeholder(tf.float32, [None, 224, 224, 3])
+    vgg = VGG16(images, '../weights_file/', sess)
+
+    from scipy.misc import imread, imresize
+    img1 =
