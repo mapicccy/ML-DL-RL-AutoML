@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
+
 class VGG16:
     def __init__(self, images, weights=None, sess=None):
         self.images = images
@@ -9,7 +10,6 @@ class VGG16:
         self.probs = tf.nn.softmax(self.fc3)
         if weights is not None and sess is not None:
             self.load_weights(weights, sess)
-
 
     def conv_layers(self):
         self.params = []
@@ -34,7 +34,8 @@ class VGG16:
             self.conv1_2 = tf.nn.relu(out, name=scope)
             self.params += [kernel, biases]
 
-        self.pool1 = tf.nn.max_pool(self.conv1_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool1')
+        self.pool1 = tf.nn.max_pool(self.conv1_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME',
+                                    name='pool1')
 
         with tf.name_scope('conv2_1') as scope:
             kernel = tf.Variable(tf.truncated_normal([3, 3, 64, 128], dtype=tf.float32, stddev=1e-1), name='weights')
@@ -52,7 +53,8 @@ class VGG16:
             self.conv2_2 = tf.nn.relu(out, name=scope)
             self.params += [kernel, biases]
 
-        self.pool2 = tf.nn.max_pool(self.conv2_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool2')
+        self.pool2 = tf.nn.max_pool(self.conv2_2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME',
+                                    name='pool2')
 
         with tf.name_scope('conv3_1') as scope:
             kernel = tf.Variable(tf.truncated_normal([3, 3, 128, 256], dtype=tf.float32, stddev=1e-1), name='weights')
@@ -78,11 +80,12 @@ class VGG16:
             self.conv3_3 = tf.nn.relu(out, name=scope)
             self.params += [kernel, biases]
 
-        self.pool3 = tf.nn.max_pool(self.conv3_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool3')
+        self.pool3 = tf.nn.max_pool(self.conv3_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME',
+                                    name='pool3')
 
         with tf.name_scope('conv4_1') as scope:
             kernel = tf.Variable(tf.truncated_normal([3, 3, 256, 512], dtype=tf.float32, stddev=1e-1), name='weights')
-            conv = tf.nn.conv2d(self.pool2, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(self.pool3, kernel, [1, 1, 1, 1], padding='SAME')
             biases = tf.Variable(tf.constant(0.0, shape=[512], dtype=tf.float32), trainable=True, name='biases')
             out = tf.nn.bias_add(conv, biases)
             self.conv4_1 = tf.nn.relu(out, name=scope)
@@ -99,16 +102,17 @@ class VGG16:
         with tf.name_scope('conv4_3') as scope:
             kernel = tf.Variable(tf.truncated_normal([3, 3, 512, 512], dtype=tf.float32, stddev=1e-1), name='weights')
             conv = tf.nn.conv2d(self.conv4_2, kernel, [1, 1, 1, 1], padding='SAME')
-            biases = tf.Variable(tf.constant(0.0, shape=512, dtype=tf.float32), trainable=True, name='biases')
+            biases = tf.Variable(tf.constant(0.0, shape=[512], dtype=tf.float32), trainable=True, name='biases')
             out = tf.nn.bias_add(conv, biases)
             self.conv4_3 = tf.nn.relu(out, name=scope)
             self.params += [kernel, biases]
 
-        self.pool4 = tf.nn.max_pool(self.conv4_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool4')
+        self.pool4 = tf.nn.max_pool(self.conv4_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME',
+                                    name='pool4')
 
         with tf.name_scope('conv5_1') as scope:
             kernel = tf.Variable(tf.truncated_normal([3, 3, 512, 512], dtype=tf.float32, stddev=1e-1), name='weights')
-            conv = tf.nn.conv2d(self.conv5_1, kernel, [1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(self.pool4, kernel, [1, 1, 1, 1], padding='SAME')
             biases = tf.Variable(tf.constant(0.0, shape=[512], dtype=tf.float32), trainable=True, name='biases')
             out = tf.nn.bias_add(conv, biases)
             self.conv5_1 = tf.nn.relu(out, name=scope)
@@ -130,8 +134,8 @@ class VGG16:
             self.conv5_3 = tf.nn.relu(out, name=scope)
             self.params += [kernel, biases]
 
-        self.pool5 = tf.nn.max_pool(self.conv5_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool5')
-
+        self.pool5 = tf.nn.max_pool(self.conv5_3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME',
+                                    name='pool5')
 
     def fc_layers(self):
         with tf.name_scope('fc1') as scope:
@@ -152,26 +156,26 @@ class VGG16:
 
         with tf.name_scope('fc3') as scope:
             fc3w = tf.Variable(tf.truncated_normal([4096, 1000], dtype=tf.float32, stddev=1e-1), name='weights')
-            fc3b = tf.Variable(tf.constant(1., shape=[4096], dtype=tf.float32), trainable=True, name='biases')
+            fc3b = tf.Variable(tf.constant(1., shape=[1000], dtype=tf.float32), trainable=True, name='biases')
             fc3l = tf.nn.bias_add(tf.matmul(self.fc2, fc3w), fc3b)
             self.fc3 = tf.nn.relu(fc2l)
             self.params += [fc3w, fc3b]
 
-
     def load_weights(self, weight_file, sess):
-        weights = np.load(weight_file)
-        keys = sorted(weights.keys())
+        w = np.load(weight_file)
+        keys = sorted(w.keys())
         for i, k in enumerate(keys):
-            print(i, k, np.shape[weights[k]])
-            sess.run(self.params[i].assign(weights[k]))
+            # print(i, k, np.shape[w[k]])
+            sess.run(self.params[i].assign(w[k]))
 
 
 if __name__ == '__main__':
     sess = tf.Session()
     images = tf.placeholder(tf.float32, [None, 224, 224, 3])
-    vgg = VGG16(images, '../weights_file/', sess)
+    vgg = VGG16(images, 'E:\\ML-DL-RL-AutoML\\DL\\tensorflow\\weights_file\\vgg16_weights.npz', sess)
 
     from scipy.misc import imread, imresize
+
     img1 = imread('../images/laska.png', mode='RGB')
     img1 = imresize(img1, (224, 224))
 
@@ -179,5 +183,6 @@ if __name__ == '__main__':
     preds = (np.argsort(prob)[::-1])[0:5]
 
     from imagenet_classes import class_names
+
     for p in preds:
         print(class_names[p], prob[p])
