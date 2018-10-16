@@ -158,14 +158,14 @@ class VGG16:
             fc3w = tf.Variable(tf.truncated_normal([4096, 1000], dtype=tf.float32, stddev=1e-1), name='weights')
             fc3b = tf.Variable(tf.constant(1., shape=[1000], dtype=tf.float32), trainable=True, name='biases')
             fc3l = tf.nn.bias_add(tf.matmul(self.fc2, fc3w), fc3b)
-            self.fc3 = tf.nn.relu(fc2l)
+            self.fc3 = tf.nn.relu(fc3l)
             self.params += [fc3w, fc3b]
 
     def load_weights(self, weight_file, sess):
         w = np.load(weight_file)
         keys = sorted(w.keys())
         for i, k in enumerate(keys):
-            # print(i, k, np.shape[w[k]])
+            print(i, k, np.shape(w[k]))
             sess.run(self.params[i].assign(w[k]))
 
 
